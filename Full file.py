@@ -8,17 +8,17 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from keras.preprocessing.sequence import TimeseriesGenerator
-from keras.utils import plot_model
-from keras.utils import to_categorical
+from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
+from tensorflow.keras.utils import plot_model
+from tensorflow.keras.utils import to_categorical
 ##
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
 #
 # Keras RNN imports
-from keras.layers import LSTM
-from keras.layers import RNN, SimpleRNN
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import RNN, SimpleRNN
 
 # for data normalization
 from sklearn.preprocessing import MinMaxScaler
