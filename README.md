@@ -141,6 +141,8 @@ dataset_train = dataset_train.shuffle(SHUFFLE_BUFFER_SIZE).batch(BATCH_SIZE)
 dataset_test = dataset_test.batch(BATCH_SIZE)
 ```
 # Testing of multiple NN types
+Following are the architecture for the models we tested, these include a SimpleNN, SimpleRNN, GRU, LSTM, and 1D CNN. Note multiple lines are commented out. Through testing we increased and decreased the number of layers for each model to find optimal performance. Instead of removing this code completely we decided to include it here in order to better show our process.
+
 First a simple Neural Network
 ```
 model = tf.keras.Sequential([
@@ -161,3 +163,92 @@ model.summary()
 # running of model
 history = model.fit(dataset_train, epochs=10,validation_data=dataset_test)
 ```
+While this model ran, the results were not good as illustrated below in Figure 1. The code above includes two layers but 3 and 1 layer models were tested as well as shown in the Figure 1.
+
+![Figure 1: Results of SimpleNN](https://github.com/Newber0/Automatic-Sleep-Stage-Classification-using-EEG-Data/blob/main/Image-Results/SimpleNN%20Results.PNG)
+
+This was primarily for proof of concept, ensuring the data was correctly processed and could be input into the model. The plotting code can be found in the [Full File.py](https://github.com/Newber0/Automatic-Sleep-Stage-Classification-using-EEG-Data/blob/main/Full%20file.py)
+
+Next a Simple RNN.
+```
+RNN_model = tf.keras.Sequential(
+[
+    #   This is for an LSTM
+    # tf.keras.layers.Embedding(input_dim=3000, output_dim=64),
+    # tf.keras.layers.LSTM(128, return_sequences=False, recurrent_dropout=0.1, input_shape=(None,2)),
+    # tf.keras.layers.LSTM(64, dropout=0.1),
+  
+    #   This is for a GRU
+    # tf.keras.layers.GRU(128, return_sequences=False, recurrent_dropout=0.2, input_shape=(None,2)),
+    # tf.keras.layers.GRU(64, dropout=0.1),
+ 
+    #   This is for SimpleRNN
+    tf.keras.layers.SimpleRNN(256, return_sequences=False, recurrent_dropout=0.2, input_shape=(3000,2)),
+    tf.keras.layers.Dense(1500, activation='relu'),
+    # tf.keras.layers.Dense(750, activation='relu'),
+    # tf.keras.layers.Dense(300, activation='relu'),
+    # tf.keras.layers.Dense(50, activation='relu'),
+    # tf.keras.layers.Dense(25, activation='relu'),
+    # tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Flatten(),
+    
+    tf.keras.layers.Dense(5, activation='softmax'),
+])
+
+RNN_model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.000001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# summary of the model
+RNN_model.summary()
+```
+These three models are well suited for time series data and so were tested. However, they are more effective at prediction of future events, and this is a problem of classification, therefore the models are not effective, as illustrated in Figure 2. While better than the SimpleNN, accuracy and loss were still very poor.
+
+![Figure 2: SimpleRNN Results](https://github.com/Newber0/Automatic-Sleep-Stage-Classification-using-EEG-Data/blob/main/Image-Results/Simple%20RNN%20Results.PNG)
+
+Finally a 1D CNN.
+```
+CNN_model = tf.keras.Sequential(
+  [
+      tf.keras.layers.Input(shape=(3000,2)),
+      # tf.keras.layers.Reshape(input_shape=(2,3000), target_shape=(2,3000,1)),
+   
+                              
+      tf.keras.layers.Conv1D(kernel_size=10, filters=50, activation='relu', padding='same', strides=2),
+      tf.keras.layers.BatchNormalization(center=True, scale=False),
+      tf.keras.layers.MaxPool1D(pool_size=(2), padding='same'),
+      tf.keras.layers.Dropout(0.20),
+
+      tf.keras.layers.Conv1D(kernel_size=10, filters=100, activation='relu', padding='same', strides=2),
+      tf.keras.layers.BatchNormalization(center=True, scale=False),
+      tf.keras.layers.MaxPool1D(pool_size=(2), padding='same'),
+      tf.keras.layers.Dropout(0.20),
+
+      #tf.keras.layers.Conv1D(kernel_size=10, filters=200, activation='relu', padding='same', strides=2),
+      #tf.keras.layers.BatchNormalization(center=True, scale=False),
+      #tf.keras.layers.MaxPool1D(pool_size=(2), padding='same'),
+      #tf.keras.layers.Dropout(0.20),
+   
+      #tf.keras.layers.Conv1D(kernel_size=10, filters=400, activation='relu', padding='same', strides=2),
+      #tf.keras.layers.BatchNormalization(center=True, scale=False),
+      #tf.keras.layers.MaxPool1D(pool_size=(2), padding='same'),
+      #tf.keras.layers.Dropout(0.20),   
+   
+      tf.keras.layers.Flatten(),
+      # tf.keras.layers.Dense(1500, activation='relu'),   
+      #tf.keras.layers.Dense(200, activation='relu'),
+      tf.keras.layers.Dropout(0.20),
+      tf.keras.layers.Dense(5, activation='softmax')
+
+  ])
+
+CNN_model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.00001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# print model layers
+CNN_model.summary()
+```
+Again multiple layers were tested and these lines have been left in the code. The final results from the optimized model can be found in Figure 3. 
+
+![Figure 3:1D CNN Optimized Results](https://github.com/Newber0/Automatic-Sleep-Stage-Classification-using-EEG-Data/blob/main/Image-Results/Optimized%201D%20CNN.PNG)
