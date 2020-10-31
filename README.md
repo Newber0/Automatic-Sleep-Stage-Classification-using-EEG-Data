@@ -6,6 +6,7 @@ This data contains
 We are only interested in the EEG data of the PSG.edf file and the label data of the Hypnogram.edf file.
 
 # Code Explanation
+```
   # Here all necessary packages are imported
   
   import numpy as np
@@ -32,5 +33,5 @@ We are only interested in the EEG data of the PSG.edf file and the label data of
   
   # for data normalization
   from sklearn.preprocessing import MinMaxScaler
-
+```
 
